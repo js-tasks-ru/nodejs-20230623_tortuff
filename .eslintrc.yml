@@ -14,3 +14,8 @@ rules:
   linebreak-style: off
   no-trailing-spaces: off
   arrow-parens: off
+  object-curly-spacing:
+    - warn
+    - always
+    - objectsInObjects: false
+      arraysInObjects: false

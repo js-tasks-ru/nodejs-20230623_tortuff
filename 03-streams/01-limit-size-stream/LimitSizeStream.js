@@ -5,10 +5,11 @@ class LimitSizeStream extends stream.Transform {
   constructor(options) {
     super(options);
 
-    this.passedBytes = 0;
+    this.passed = 0;
 
     const limit = +options.limit;
     this.limit = !isNaN(limit) ? limit : 64 * 1024; // 64kb by default
+    this.objectMode = Boolean(options.objectMode);
   }
 
   static createLimitSizeStream(options) {
@@ -16,15 +17,18 @@ class LimitSizeStream extends stream.Transform {
   }
 
   _transform(chunk, encoding, callback) {
-    const buffer = Buffer.from(chunk);
-    this.passedBytes += buffer.length;
-
-    if (this.passedBytes > this.limit) {
-      callback(new LimitExceededError());
-      return;
+    if (this.objectMode) {
+      this.passed += 1;
+    } else {
+      const buffer = Buffer.from(chunk);
+      this.passed += buffer.length;
     }
 
-    callback(null, chunk);
+    if (this.passed > this.limit) {
+      callback(new LimitExceededError());
+    } else {
+      callback(null, chunk);
+    }
   }
 }
 
