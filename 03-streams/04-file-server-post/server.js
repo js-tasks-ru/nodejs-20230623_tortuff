@@ -20,16 +20,17 @@ server.on('request', (req, res) => {
   if (filename.includes('/')) {
     res.statusCode = 400;
     res.end('Incorrect path');
+    return;
   }
 
   switch (req.method) {
-    case 'POST':
-      createFile(req, res, filename);
-      break;
+  case 'POST':
+    createFile(req, res, filename);
+    break;
 
-    default:
-      res.statusCode = 501;
-      res.end('Not implemented');
+  default:
+    res.statusCode = 501;
+    res.end('Not implemented');
   }
 });
 
@@ -45,26 +46,40 @@ function createFile(req, res, filename) {
   const writeStream = fs.createWriteStream(filepath);
   const limitStream = new LimitSizeStream({ limit: 1024 * 1024 });
 
-  req.on('close', () => removeFile(filepath));
-  writeStream.on('finish', () => res.end('The file has been successfully uploaded'));
+  req.on('close', () => {
+    if (!writeStream.writableEnded) {
+      writeStream.end();
+      removeFile(filepath);
+    }
+  });
 
   limitStream.on('error', (err) => {
+    writeStream.destroy();
+    removeFile(filepath);
+
     if (err instanceof LimitExceededError) {
       res.statusCode = 413;
-      res.end(`The file "${filename}" is bigger than 1MB`);
+      res.statusMessage = `The file "${filename}" is bigger than 1MB`;
     } else {
       res.statusCode = 500;
-      res.end(`Internal server error`);
+      res.statusMessage = 'Internal server error';
     }
 
-    removeFile(filepath);
-    limitStream.end();
+    req.on('end', () => res.end());
+    req.resume();
+  });
+
+  writeStream.on('finish', () => {
+    res.statusCode = 201;
+    res.end(`The file "${filename}" has been successfully uploaded`);
   });
 
   req.pipe(limitStream).pipe(writeStream);
 }
 
 function removeFile(filepath) {
+  if (!hasAccess(filepath)) return;
+
   fs.rm(filepath, (err) => {
     if (err) {
       console.log(`[ERROR] Error occurred during the file removing: ${err.message}`);

@@ -19,3 +19,6 @@ rules:
     - always
     - objectsInObjects: false
       arraysInObjects: false
+  indent:
+    - warn
+    - 2
