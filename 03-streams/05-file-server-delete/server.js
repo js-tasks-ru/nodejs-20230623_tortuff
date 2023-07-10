@@ -30,7 +30,7 @@ server.on('request', (req, res) => {
 function removeFile(res, filepath, pathname) {
   if (!hasAccess(filepath)) {
     res.statusCode = 404;
-    res.end(`File ${pathname} not found`);
+    res.end(`File "${pathname}" not found`);
     return;
   }
 
@@ -38,7 +38,7 @@ function removeFile(res, filepath, pathname) {
     if (err) {
       console.log(`[Error] During the file "${pathname}" removing an error occurred: `, err.message);
       res.statusCode = 500;
-      res.end('Internal server error. Something went wring during the file removing: ', pathname);
+      res.end('Internal server error. Something went wrong during the file removing: ', pathname);
       return;
     }
 
