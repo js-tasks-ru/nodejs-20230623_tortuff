@@ -35,7 +35,7 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[0]).to.have.property('error').and.to.be.equal('too long, expect 20, got 27');
     });
 
-    it('Validator validates long string field', () => {
+    it('Validator validates normal string field', () => {
       const validator = new Validator({
         name: {
           type: 'string',
@@ -49,7 +49,7 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors).to.have.length(0);
     });
 
-    it('Validator validates little number field', () => {
+    it('Validator validates little number', () => {
       const validator = new Validator({
         age: {
           type: 'number',
@@ -65,7 +65,7 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[0]).to.have.property('error').and.to.be.equal('too little, expect 10, got 7');
     });
 
-    it('Validator validates big number field', () => {
+    it('Validator validates big number', () => {
       const validator = new Validator({
         age: {
           type: 'number',
@@ -81,7 +81,7 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[0]).to.have.property('error').and.to.be.equal('too big, expect 20, got 22');
     });
 
-    it('Validator validates normal number field', () => {
+    it('Validator validates normal number', () => {
       const validator = new Validator({
         age: {
           type: 'number',
