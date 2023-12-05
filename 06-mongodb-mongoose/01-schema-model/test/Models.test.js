@@ -27,6 +27,8 @@ describe('mongodb-mongoose/schema-model', () => {
     it('поле subcategories имеет правильную конфигурацию', () => {
       const subcategories = Category.schema.obj.subcategories;
 
+      console.log('subcategories >> ', subcategories);
+
       expect(subcategories, 'subcategories - массив').to.be.an('array');
 
       const title = subcategories[0].obj.title;
