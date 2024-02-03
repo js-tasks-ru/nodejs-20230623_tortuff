@@ -10,6 +10,7 @@ const schema = new mongoose.Schema({
   lastVisit: {
     type: Date,
     required: true,
+    default: Date.now,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,6 +19,6 @@ const schema = new mongoose.Schema({
   },
 });
 
-schema.path('lastVisit').index({expires: '7d'});
+schema.path('lastVisit').index({ expires: '7d' });
 
 module.exports = connection.model('Session', schema);
